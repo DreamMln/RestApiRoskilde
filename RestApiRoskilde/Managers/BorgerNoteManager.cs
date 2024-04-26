@@ -4,35 +4,42 @@ namespace RestApiRoskilde.Managers
 {
     public class BorgerNoteManager
     {
-        //autoincrement - static?
-        private static int _nextId = 0;
-        //liste med borgers tlf nr
-        private static List<BorgerNote> _borgerNoteListe = new List<BorgerNote>()
-        {
-            new BorgerNote { ID = _nextId++, NoteOmBorger = "Her er der en note", DatoTid = DateTime.Now},
-            new BorgerNote { ID = _nextId++, NoteOmBorger = "Her er der endnu en note", DatoTid = DateTime.Now},
-        };
+        //HVORFOR EN MANAGER TIL BORGERNOTER?
+        //DER SKAL LAVES MERE KOMPLEXITET TIL NOTER, REDIGER OG SLET
+        //DET GIVER DERFOR MENING AT HAVE EN MANAGER CLASS TIL BORGERNOTER
 
-        public IEnumerable<BorgerNote> GetAllNoter()
+        public BorgerManager _borgerManager = new BorgerManager();
+        //public Borger _borger;
+        //autoincrement - static?
+        //private static int _nextId = 0;
+
+        //liste med borgers tlf nr
+        //private static List<BorgerNote> borgerNoteListe = new List<BorgerNote>()
+        //{
+        //    new BorgerNote { ID = _nextId++, NoteOmBorger = "Her er der en note", DatoTid = DateTime.Now},
+        //    new BorgerNote { ID = _nextId++, NoteOmBorger = "Her er der endnu en note", DatoTid = DateTime.Now},
+        //};
+
+        public IEnumerable<BorgerNote> GetAllNoter(int id)
         {
-            List<BorgerNote> result = new List<BorgerNote>(_borgerNoteListe);
+            Borger borger = _borgerManager.GetByIDBorger(id);
+            List<BorgerNote> result = new List<BorgerNote>(borger.borgerNoter);
             return result;
         }
-        public BorgerNote OpretBorgerNote(BorgerNote opretNote)
+        public BorgerNote OpretNote(BorgerNote opretNote, int id)
         {
-            //FK til en borgerinfo
-            opretNote.ID = _nextId++;
-            _borgerNoteListe.Add(opretNote);
+            Borger borger = _borgerManager.GetByIDBorger(id);
+            borger.borgerNoter.Add(opretNote);
             return opretNote;   
         }
-        public BorgerNote RedigerBorgerNote(int id, BorgerNote redigerNote)
-        {
-            BorgerNote eksisterendeBorgerNote = _borgerNoteListe.Find(n => n.ID == id);
-            if (eksisterendeBorgerNote != null)
-            {
-                eksisterendeBorgerNote.NoteOmBorger = redigerNote.NoteOmBorger;
-            }
-            return eksisterendeBorgerNote;
-        }
+        //public BorgerNote RedigerNote(int id, BorgerNote redigerNote)
+        //{
+        //    BorgerNote eksisterendeBorgerNote = borgerNoteListe.Find(n => n.ID == id);
+        //    if (eksisterendeBorgerNote != null)
+        //    {
+        //        eksisterendeBorgerNote.NoteOmBorger = redigerNote.NoteOmBorger;
+        //    }
+        //    return eksisterendeBorgerNote;
+        //}
     }
 }
