@@ -1,5 +1,12 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Newtonsoft.Json;
 using System.Security.Claims;
+using System.Web.Http;
+
+//var config = new HttpConfiguration();
+//config.Formatters.JsonFormatter.SerializerSettings.DateTimeZoneHandling
+//    = DateTimeZoneHandling.Local;
+//config.Formatters.JsonFormatter.SerializerSettings.DateFormatString = "yyyy-MM-dd HH:mm";
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,8 +38,6 @@ builder.Services.AddCors(options =>
         policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
     });
 });
-
-
 
 var app = builder.Build();
 

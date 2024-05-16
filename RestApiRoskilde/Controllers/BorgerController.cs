@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
 using Microsoft.OpenApi.Expressions;
 using RestApiRoskilde.Managers;
 using RestApiRoskilde.Models;
@@ -17,7 +18,7 @@ namespace RestApiRoskilde.Controllers
         //private BorgerNoteManager _managerBorgerNote = new();
         //private BorgerRegiManager _registreringManager = new();
 
-        //get all borgere
+        //GET ALL borgere
         // GET: api/<AdminController>
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -31,61 +32,55 @@ namespace RestApiRoskilde.Controllers
             }
             return Ok(result);
         }
-        // GET api/<AdminController>/5
-        //[HttpGet("tlf/{tlf}")]
-        //public ActionResult<Borger> Get(string tlf)
-        //{
-        //    Borger result = _managerBorger.GetByTlfBorger(tlf);
-        //    if (result == null)
-        //    {
-        //        return NotFound("Der findes ingen borger med dette tlf nr!");
-        //    }
-        //    return Ok(result);
-        //}
-        //get borger by id
+        //GET by id
         [HttpGet("{id}")]
         public ActionResult<Borger> Get(int id)
         {
             return _managerBorger.GetByIDBorger(id);
         }
+        //POST opret borgere
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status201Created)]
         [HttpPost]
         public ActionResult<Borger> Post([FromBody] Borger opretBorger)
         {
             Borger opret = _managerBorger.OpretBorger(opretBorger);
             if (opret == null)
             {
-                return null;
+                return NoContent();
             }
             //location header bliver udfyldt, fordi jeg ikke skal bruge svaret
             return Created($"/api/borger/{opretBorger.ID}", opret);
 
         }
         /// <summary>
-        /// ////BORGER REGISTRERINGER
+        /// ////BORGER REGISTRERINGER///
         /// </summary>
         /// <param borgerID></param>
         /// <returns></returns>
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         [HttpGet("{borgerID}/BorgerRegistreringer")]
         public ActionResult<IEnumerable<BorgerRegistrering>> GetAll(int borgerID)
         {
             IEnumerable<BorgerRegistrering> result = _managerBorger.GetAllRegi(borgerID);
             if (result.Count() == 0)
             {
-                return NotFound();
+                //listen er tom
+                return NoContent();
             }
+            //ellers returner listen med borger registreringer
             return Ok(result);
         }
-        
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [HttpPost("{borgerID}/BorgerRegistreringer")]
         public ActionResult<BorgerRegistrering> Post([FromBody] BorgerRegistrering opretBorgerRegi, int borgerID)
         {
-            _managerBorger.GetByIDBorger(borgerID);
+            //_managerBorger.GetByIDBorger(borgerID);
             BorgerRegistrering opret = _managerBorger.OpretRegi(opretBorgerRegi, borgerID);
             if (opret == null)
             {
-                return null;
+                return BadRequest("OpretRegi er null!");
             }
             //location header bliver udfyldt, fordi jeg ikke skal bruge svaret
             return NoContent();
@@ -117,7 +112,8 @@ namespace RestApiRoskilde.Controllers
         //    return NoContent();
         //}
         /// <summary>
-        /// /BORGER NOTER
+        
+        ////BORGER NOTER///
         /// </summary>
         /// <param name="borgerID"></param>
         /// <returns></returns>
@@ -137,7 +133,6 @@ namespace RestApiRoskilde.Controllers
             }
             return Ok(result);
         }
-        //Virker ikke
         //Note om borger der postes på den samme side
         // POST api/<AdminController>
         [HttpPost("{borgerID}/BorgerNoter")]
@@ -149,28 +144,60 @@ namespace RestApiRoskilde.Controllers
             BorgerNote opretNote = _managerNoteBorger.OpretNote(borgerNote, borgerID);
             if (opretNote == null)
             {
-                return null;
+                return BadRequest();
             }
             //location header bliver udfyldt, fordi jeg ikke skal bruge svaret
             return NoContent();
             //return Created($"/api/borger/{opretNote.ID = borger.ID}", opretNote);
         }
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [HttpDelete("{borgerID}/BorgerNoter")]
+        public ActionResult<BorgerNote> Delete(int noteID, int borgerID)
+        {
+            BorgerNote sletNote = _managerNoteBorger.SletNote(noteID, borgerID);
+            if (sletNote == null)
+            { 
+                return NotFound(); 
+            }
+            return Ok(sletNote);
+        }
+        /// <summary>
+        //// BY TLF (istedet for getbyid) ////
+        /// </summary>
+        /// <param name="tlf"></param>
+        /// <returns></returns>
+        [HttpGet("{borgerByTlf}/BorgerTlf")]
+        public ActionResult<Borger> Get(string tlf)
+        {
+            return _managerBorger.GetBorgerByTlf(tlf);
+        }
 
         //"LOGIN" api/<AdminController>/5
-        //If you need to return a status code of 403 (Forbidden)
-        //in case the Borger object is null, returns a Forbid Result with a message.
-        [ProducesResponseType(StatusCodes.Status403Forbidden)]
-        [HttpGet("{borgerTlfExists}")]
-        public ActionResult<Borger> GetByTlf(string tlf)
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [HttpPost("{borgerByTlfExists}/BorgerTlf")]
+        public ActionResult<Borger> Post(string tlf)
         {
-            //igang - 
-            Borger? borger = _managerBorger.GetBorgerByTlf(tlf);
-            if (borger == null)
+            // Call the CheckIfBorgerExists method to check or create Borger
+            Borger? opretNyBorgerMedTlf = _managerBorger.CheckIfBorgerExists(tlf);
+            if (opretNyBorgerMedTlf == null)
             {
-                borger = _managerBorger.CheckIfBorgerExists(tlf);
-                //return Forbid("Borger eksistere allerede" + borger);
+                return BadRequest("Opret Tlf er null!");
+
             }
-            return Ok(borger);
+            return Ok(opretNyBorgerMedTlf);
+
         }
+        //[HttpPost("{opretRegiByTlf}/BorgerTlf")]
+        //public ActionResult<Borger> PostByTlf([FromBody] BorgerRegistrering opretRegiByTlf, string tlf)
+        //{
+        //    BorgerRegistrering regiByTlf = _managerBorger.OpretRegiByTlf(opretRegiByTlf, tlf);
+        //    if (regiByTlf == null)
+        //    {
+        //        return BadRequest("Opret regi er null!");
+        //    }
+        //    //location header bliver udfyldt, fordi jeg ikke skal bruge svaret
+        //    return NoContent();
+        //}
     }
 }

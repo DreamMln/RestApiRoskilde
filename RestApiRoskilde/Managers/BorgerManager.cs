@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.Formatters;
 using RestApiRoskilde.Models;
+using System.Globalization;
 
 namespace RestApiRoskilde.Managers
 {
@@ -19,7 +20,7 @@ namespace RestApiRoskilde.Managers
                 {
                     new BorgerRegistrering() 
                     { 
-                        Ind = DateTime.Now, 
+                        Ind = DateTime.Now,
                         Ud = DateTime.Now,
                         BorgerPauser = new List<BorgerPause>()
                         {
@@ -84,8 +85,8 @@ namespace RestApiRoskilde.Managers
                             new BorgerPause() 
                             { 
                                 PauseStart = DateTime.Now, 
-                                PauseSlut = DateTime.Now
-                            }
+                                PauseSlut = DateTime.Now,
+    }
                         }
                     }
                 },
@@ -123,23 +124,28 @@ namespace RestApiRoskilde.Managers
         //////////////////BORGER REGISTRERINGER///////////
         public IEnumerable<BorgerRegistrering> GetAllRegi(int id)
         {
-            Borger borger = GetByIDBorger(id);
+            //vi forventer at den nogle gange er null
+            Borger? borger = GetByIDBorger(id);
+            if (borger == null)
+            {
+                return null;
+            }
             //en kopi af listen
             List<BorgerRegistrering> result = new List<BorgerRegistrering>(borger.BorgerRegistreringer);
             return result;
         }
-        //get borger på deres ID
-        //public BorgerRegistrering GetByIDRegi(int id)
-        //{
-        //    return _borgerRegiListe.Find(r => r.ID == id);
-        //}
         //Opret en ny registrering
         public BorgerRegistrering OpretRegi(BorgerRegistrering opretReg, int id)
         {
             Borger borger = GetByIDBorger(id);
+            if (borger == null)
+            {
+                return null;
+            }
+            //opretReg.Ud = DateTime.Now;
             borger.BorgerRegistreringer.Add(opretReg);
             return opretReg;
-        }
+        }       
         //////////////////BORGER PAUSER///////////
         //public IEnumerable<BorgerPause> GetAllPauser()
         //{
