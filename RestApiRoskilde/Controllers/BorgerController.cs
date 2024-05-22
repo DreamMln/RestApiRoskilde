@@ -90,29 +90,32 @@ namespace RestApiRoskilde.Controllers
         /////BORGER PAUSER///
         /// </summary>
         /// <returns></returns>
-        //[HttpGet("BorgerPauser")]
-        //public ActionResult<IEnumerable<BorgerPause>> GetAll()
-        //{
-        //    IEnumerable<BorgerPause> result = _managerBorger.GetAllPauser();
-        //    if (result.Count() == 0)
-        //    {
-        //        return NotFound();
-        //    }
-        //    return Ok(result);
-        //}
-
-        //[HttpPost("BorgerPauser")]
-        //public ActionResult<BorgerPause> Post([FromBody] BorgerPause borgerPause, int borgerID)
-        //{
-        //    _managerBorger.GetAllPauser();
-        //    if (borgerPause == null)
-        //    {
-        //        return null;
-        //    }
-        //    return NoContent();
-        //}
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [HttpGet("{borgerID}/BorgerPauser")]
+        public ActionResult<IEnumerable<BorgerPause>> GetAllP(int borgerID)
+        {
+            IEnumerable<BorgerPause> result = _managerBorger.GetAllPauser(borgerID);
+            if (result.Count() == 0)
+            {
+                //listen er tom
+                return NoContent();
+            }
+            //ellers returner listen med borger pauser
+            return Ok(result);
+        }
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [HttpPost("{borgerID}/BorgerPauser")]
+        public ActionResult<BorgerPause> Post([FromBody] BorgerPause borgerPause, int borgerID)
+        {
+            BorgerPause opretPause = _managerBorger.OpretPause(borgerPause, borgerID);
+            if (opretPause == null)
+            {
+                return BadRequest("OpretPause er null!");
+            }
+            //location header bliver udfyldt, fordi jeg ikke skal bruge svaret
+            return NoContent();
+        }
         /// <summary>
-        
         ////BORGER NOTER///
         /// </summary>
         /// <param name="borgerID"></param>
@@ -129,8 +132,10 @@ namespace RestApiRoskilde.Controllers
             IEnumerable<BorgerNote> result = _managerNoteBorger.GetAllNoter(borgerID);
             if (result.Count() == 0)
             {
-                return NotFound();
+                //listen er tom
+                return NoContent();
             }
+            //ellers returner listen med borger noter
             return Ok(result);
         }
         //Note om borger der postes på den samme side
@@ -138,9 +143,9 @@ namespace RestApiRoskilde.Controllers
         [HttpPost("{borgerID}/BorgerNoter")]
         public ActionResult<BorgerNote> Post([FromBody] BorgerNote borgerNote, int borgerID)
         {
-            //finde borgeren - hver gang, med som parameter hver gang
-            //Borger borger = _managerBorger.GetByIDBorger(borgerID);
-            //nu vil jeg have fat i borgerens borgernotemanager, og opretnoten - på borgeren med det ID som jeg indtaster, der er derfor et lag mere
+            //finde borgeren - hver gang, med som parameter i hver metode
+            //nu vil jeg have fat i borgerens borgernotemanager, og opretnoten -
+            //på borgeren med det NoteID som jeg indtaster, der er derfor et lag mere
             BorgerNote opretNote = _managerNoteBorger.OpretNote(borgerNote, borgerID);
             if (opretNote == null)
             {
@@ -148,7 +153,7 @@ namespace RestApiRoskilde.Controllers
             }
             //location header bliver udfyldt, fordi jeg ikke skal bruge svaret
             return NoContent();
-            //return Created($"/api/borger/{opretNote.ID = borger.ID}", opretNote);
+            //return Created($"/api/borger/{opretNote.NoteID = borger.NoteID}", opretNote);
         }
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpDelete("{borgerID}/BorgerNoter")]
@@ -188,16 +193,5 @@ namespace RestApiRoskilde.Controllers
             return Ok(opretNyBorgerMedTlf);
 
         }
-        //[HttpPost("{opretRegiByTlf}/BorgerTlf")]
-        //public ActionResult<Borger> PostByTlf([FromBody] BorgerRegistrering opretRegiByTlf, string tlf)
-        //{
-        //    BorgerRegistrering regiByTlf = _managerBorger.OpretRegiByTlf(opretRegiByTlf, tlf);
-        //    if (regiByTlf == null)
-        //    {
-        //        return BadRequest("Opret regi er null!");
-        //    }
-        //    //location header bliver udfyldt, fordi jeg ikke skal bruge svaret
-        //    return NoContent();
-        //}
     }
 }

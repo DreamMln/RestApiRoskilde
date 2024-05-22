@@ -2,8 +2,8 @@
 {
     public class BorgerNote
     {
-        public int ID { get; set; }
+        public int NoteID { get; set; }
         public string NoteOmBorger { get; set; }
-        public DateTime DatoTid { get; set; }
+        public string DatoTid { get; set; }
     }
 }

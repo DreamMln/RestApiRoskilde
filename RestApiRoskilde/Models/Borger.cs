@@ -7,14 +7,20 @@ namespace RestApiRoskilde.Models
         public int ID { get; set; }
         public string Navn { get; set; }
         public string Tlf { get; set; }
+        //listen gjort nullable
         public List<BorgerRegistrering> BorgerRegistreringer { get; set; }
-        //hver gang jeg opretter et nyt borger obj. oprettes en liste af regi.
+        public List<BorgerPause> BorgerPauser { get; set; }
+        //gør notelisten nullable
+        public List<BorgerNote> borgerNoter { get; set; }
+
+        //hver gang jeg opretter et nyt borger obj. oprettes en liste af regi, pauser og af noter
         public Borger() 
         {
             BorgerRegistreringer = new List<BorgerRegistrering>();
+            BorgerPauser = new List<BorgerPause>();
+            borgerNoter = new List<BorgerNote>();
         }
         //Ændret til en liste af borger noter
-        public List<BorgerNote> borgerNoter { get; set; }
 
     }
 }

@@ -2,8 +2,7 @@
 {
     public class BorgerRegistrering
     {
-        public DateTime Ind { get; set; }
-        public DateTime Ud { get; set; }
-        public List<BorgerPause>? BorgerPauser { get; set; }
+        public string? Ind { get; set; }
+        public string? Ud { get; set; }
     }
 }
