@@ -115,6 +115,7 @@ namespace RestApiRoskilde.Controllers
             //location header bliver udfyldt, fordi jeg ikke skal bruge svaret
             return NoContent();
         }
+  
         /// <summary>
         ////BORGER NOTER///
         /// </summary>
@@ -157,7 +158,7 @@ namespace RestApiRoskilde.Controllers
         }
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpDelete("{borgerID}/BorgerNoter")]
-        public ActionResult<BorgerNote> Delete(int noteID, int borgerID)
+        public ActionResult<BorgerNote> Delete([FromQuery] int noteID, int borgerID)
         {
             BorgerNote sletNote = _managerNoteBorger.SletNote(noteID, borgerID);
             if (sletNote == null)
@@ -180,7 +181,7 @@ namespace RestApiRoskilde.Controllers
         //"LOGIN" api/<AdminController>/5
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [HttpPost("{borgerByTlfExists}/BorgerTlf")]
+        [HttpPost("{tlf}/BorgerTlf")]
         public ActionResult<Borger> Post(string tlf)
         {
             // Call the CheckIfBorgerExists method to check or create Borger
@@ -191,6 +192,22 @@ namespace RestApiRoskilde.Controllers
 
             }
             return Ok(opretNyBorgerMedTlf);
+
+        }
+        //fra query
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [HttpPut("{borgerID}")]
+        public ActionResult<Borger> Put(int borgerID, [FromQuery] string navn)
+        {
+            // Call the CheckIfBorgerExists method to check or create Borger
+            Borger? opretBorgerMedNavn = _managerBorger.OpdaterBorgerNavn(navn, borgerID);
+            if (opretBorgerMedNavn == null)
+            {
+                return NotFound("Borger findes ikke!");
+
+            }
+            return Ok(opretBorgerMedNavn);
 
         }
     }

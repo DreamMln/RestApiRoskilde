@@ -22,6 +22,11 @@ namespace RestApiRoskilde.Managers
         public BorgerNote OpretNote(BorgerNote opretNote, int id)
         {
             Borger borger = _borgerManager.GetByIDBorger(id);
+            if (borger == null)
+            {
+                return null;
+            }
+            //ellers
             opretNote.NoteID = _autoID++;
             borger.borgerNoter.Add(opretNote);
             return opretNote;   

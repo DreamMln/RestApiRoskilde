@@ -8,6 +8,8 @@ namespace RestApiRoskilde.Managers
     {
         //autoincrement - static?
         private static int _nextId = 0;
+        private static int _nextIdRegi = 1;
+        private static int _nextIdPause = 1;
 
         //liste med borgere
         private static List<Borger> _borgerListe = new List<Borger>()
@@ -20,7 +22,7 @@ namespace RestApiRoskilde.Managers
                 {
                     new BorgerRegistrering() 
                     { 
-                        Ind = DateTime.Now.ToString("dddd, dd MMMM yyyy HH:mm:ss"),
+                        Ind = DateTime.Now.AddHours(-4).ToString("dddd, dd MMMM yyyy HH:mm:ss"),
                         Ud = DateTime.Now.ToString("dddd, dd MMMM yyyy HH:mm:ss"),
                         
                     }
@@ -28,7 +30,8 @@ namespace RestApiRoskilde.Managers
                 BorgerPauser = new List<BorgerPause>()
                     {
                             new BorgerPause() {
-                                PauseStart = DateTime.Now.ToString("dddd, dd MMMM yyyy HH:mm:ss"),
+
+                                PauseStart = DateTime.Now.AddMinutes(-31).ToString("dddd, dd MMMM yyyy HH:mm:ss"),
                                 PauseSlut = DateTime.Now.ToString("dddd, dd MMMM yyyy HH:mm:ss")
                             }
                      },
@@ -37,7 +40,7 @@ namespace RestApiRoskilde.Managers
                     new BorgerNote
                     {
                         NoteOmBorger = "Her er der en note om klaus",
-                        DatoTid = DateTime.Now.AddHours(-3.05).ToString("dddd, dd MMMM yyyy HH:mm:ss")
+                        DatoTid = DateTime.Now.ToString("dddd, dd MMMM yyyy HH:mm:ss")
                     }
                 }
             },
@@ -55,12 +58,11 @@ namespace RestApiRoskilde.Managers
                     }
                 },
                 BorgerPauser = new List<BorgerPause>()
-                        {
-                            new BorgerPause() {
-                                PauseStart = DateTime.Now.AddHours(-4).ToString("dddd, dd MMMM yyyy HH:mm:ss"),
+                        { new BorgerPause() {
+                                PauseStart = DateTime.Now.AddMinutes(-15).ToString("dddd, dd MMMM yyyy HH:mm:ss"),
                                 PauseSlut = DateTime.Now.ToString("dddd, dd MMMM yyyy HH:mm:ss")
-                            }
-                        },
+                        }
+                },
                 borgerNoter = new List<BorgerNote>
                 {
                     new BorgerNote
@@ -78,7 +80,7 @@ namespace RestApiRoskilde.Managers
                 { 
                     new BorgerRegistrering() 
                     { 
-                        Ind = DateTime.Now.ToString("dddd, dd MMMM yyyy HH:mm:ss"), 
+                        Ind = DateTime.Now.AddHours(-3.05).ToString("dddd, dd MMMM yyyy HH:mm:ss"), 
                         Ud = DateTime.Now.ToString("dddd, dd MMMM yyyy HH:mm:ss"),
                         
                     }
@@ -87,7 +89,7 @@ namespace RestApiRoskilde.Managers
                         {
                             new BorgerPause()
                             {
-                                PauseStart = DateTime.Now.ToString("dddd, dd MMMM yyyy HH:mm:ss"),
+                                PauseStart = DateTime.Now.AddMinutes(-12).ToString("dddd, dd MMMM yyyy HH:mm:ss"),
                                 PauseSlut = DateTime.Now.ToString("dddd, dd MMMM yyyy HH:mm:ss")
     }
                         },
@@ -114,12 +116,25 @@ namespace RestApiRoskilde.Managers
             Borger borger = _borgerListe.Find(b => b.ID == id);
             return borger;
         }
-        
+
         //Opret en ny borger
         public Borger OpretBorger(Borger borger)
         {
             borger.ID = _nextId++;
             _borgerListe.Add(borger);
+            return borger;
+        }
+
+        //Opret et navn på borger - det er en update
+        public Borger OpdaterBorgerNavn(string navn, int borgerID)
+        {
+            Borger borger = GetByIDBorger(borgerID);
+            if (borger == null)
+            {
+                return null;
+            }
+            //opdater borgerens navn
+            borger.Navn = navn;
             return borger;
         }
         //////////////////BORGER REGISTRERINGER///////////
@@ -143,9 +158,22 @@ namespace RestApiRoskilde.Managers
             {
                 return null;
             }
-            //opretReg.Ind = DateTime.Now.ToString("dddd, dd MMMM yyyy HH:mm:ss");
-            //opretReg.Ud = DateTime.Now.ToString("dddd, dd MMMM yyyy HH:mm:ss");
-            borger.BorgerRegistreringer.Add(opretReg);
+            //hvis ikke null
+            if (opretReg.Ind != null)
+            {
+                opretReg.RegiID = _nextIdRegi++;
+                borger.BorgerRegistreringer.Add(opretReg);
+
+            }
+            //hvis opret regi.ud ikke er null
+            else if (opretReg.Ud != null)
+            {
+                //vil finde en ud regi der ikke har en udregstrering
+                BorgerRegistrering udRegi = borger.BorgerRegistreringer.FirstOrDefault(regi => regi.Ud == null);
+                //udregi bliver sat til en ud regi
+                udRegi.Ud = opretReg.Ud;
+
+            }
             return opretReg;
         }
         //////////////////BORGER PAUSER///////////
@@ -162,14 +190,29 @@ namespace RestApiRoskilde.Managers
         }
         public BorgerPause OpretPause(BorgerPause opretPause, int id)
         {
+            //opret en pause på borgeren med id
             Borger borger = GetByIDBorger(id);
-            if (opretPause == null)
+            //hvis borger er null, returner null
+            if (borger == null)
             {
                 return null;
             }
-            //opretPause.PauseStart = DateTime.Now.ToString("dddd, dd MMMM yyyy HH:mm:ss");
-            //opretPause.PauseSlut = DateTime.Now.ToString("dddd, dd MMMM yyyy HH:mm:ss");
-            borger.BorgerPauser.Add(opretPause);
+            //hvis opret pause.pauseStart, ikke er null
+            if (opretPause.PauseStart != null)
+            {
+                //så opret pause til listen med pauser
+                opretPause.PauseID = _nextIdPause++;
+                borger.BorgerPauser.Add(opretPause);
+
+            }
+            //hvis opret pause slut ikke er null
+            else if (opretPause.PauseSlut != null)
+            {
+                BorgerPause pauseSlut = borger.BorgerPauser.FirstOrDefault(pause => pause.PauseSlut == null);
+                //PauseSlut bliver sat til en slut pause
+                pauseSlut.PauseSlut = opretPause.PauseSlut;
+
+            }
             return opretPause;
         }
         public Borger? GetBorgerByTlf(string tlf)
@@ -191,3 +234,5 @@ namespace RestApiRoskilde.Managers
         }
     }
 }
+    
+
