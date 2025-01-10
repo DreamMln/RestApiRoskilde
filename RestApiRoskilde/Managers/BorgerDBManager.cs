@@ -71,6 +71,5 @@ namespace RestApiRoskilde.Managers
             return borgerOpgaverListe;
         }
 
-
     }
 }
