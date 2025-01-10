@@ -1,5 +1,8 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 using Newtonsoft.Json;
+using RestApiRoskilde.Managers;
 using System.Security.Claims;
 using System.Web.Http;
 
@@ -16,6 +19,21 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+//add local DB
+bool useSQL = true;
+if (useSQL)
+{
+    var optionsBuilder = new DbContextOptionsBuilder<DBConnection>();
+    optionsBuilder.UseSqlServer(Secret.ConnectionString);
+    DBConnection context = new DBConnection(optionsBuilder.Options);
+    builder.Services.AddSingleton(new BorgerDBManager(context));
+}
+//ellers brug mock data
+else
+{
+    builder.Services.AddSingleton(new BorgerManager());
+}
 
 //cookie authentification
 builder.Services.AddAuthentication(CookieAuthenticationDefaults

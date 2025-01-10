@@ -13,109 +13,139 @@ namespace RestApiRoskilde.Controllers
     public class BorgerController : ControllerBase
     {
         //refencer til manager classes - hvorfor new på??
-        private BorgerManager _managerBorger = new();
-        private BorgerNoteManager _managerNoteBorger = new();
-        //private BorgerNoteManager _managerBorgerNote = new();
-        //private BorgerRegiManager _registreringManager = new();
+        //private BorgerManager _managerBorger = new();
+        //private BorgerNoteManager _managerNoteBorger = new();
+
+        //Ny reference
+        private BorgerDBManager _borgerDB;
+        //her sættes DB på, derfor ændres new(); til DP Inj.
+        public BorgerController(BorgerDBManager borgerDBManager)
+        {
+            _borgerDB = borgerDBManager;
+        }
 
         //GET ALL borgere
         // GET: api/<AdminController>
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpGet]
-        public ActionResult<IEnumerable<Borger>> Get()
+        public ActionResult<IEnumerable<BorgerOplysninger>> Get()
         {
-            IEnumerable<Borger> result = _managerBorger.GetAllBorger();
-            if (result.Count() == 0)
+            IEnumerable<BorgerOplysninger> result = _borgerDB.GetAllB();
+            if (!result.Any())
             {
-                return NotFound();
+               return NotFound();
             }
             return Ok(result);
         }
         //GET by id
         [HttpGet("{id}")]
-        public ActionResult<Borger> Get(int id)
+        public ActionResult<BorgerOplysninger> Get(int id)
         {
-            return _managerBorger.GetByIDBorger(id);
+            return _borgerDB.GetByIDBorger(id);
         }
         //POST opret borgere
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [HttpPost]
-        public ActionResult<Borger> Post([FromBody] Borger opretBorger)
+        public ActionResult<BorgerOplysninger> Post([FromBody] BorgerOplysninger addBorger)
         {
-            Borger opret = _managerBorger.OpretBorger(opretBorger);
-            if (opret == null)
+            BorgerOplysninger result = _borgerDB.OpretBorgerDB(addBorger);
+            if (result == null)
             {
                 return NoContent();
             }
-            //location header bliver udfyldt, fordi jeg ikke skal bruge svaret
-            return Created($"/api/borger/{opretBorger.ID}", opret);
-
+            //ellers så fortæller den at her kan du hente den actor
+            //viser vejen, her med url'en:
+            return Created($"/api/borger/{result.ID}", result);
         }
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        // DELETE api/<BorgerController>/5
+        [HttpDelete("{id}")]
+        public ActionResult Delete(int id)
+        {
+            BorgerOplysninger borgerRemove = _borgerDB.SletBorgerDB(id);
+            if (borgerRemove == null)
+            {
+                return NotFound("There is no borger, with id " + id);
+            }
+            return Ok(borgerRemove);
+        }
+        //public ActionResult<Borger> Post([FromBody] Borger opretBorger)
+        //{
+        //    Borger opret = _borgerDB.OpretBorger(opretBorger);
+        //    if (opret == null)
+        //    {
+        //        return NoContent();
+        //    }
+        //    //location header bliver udfyldt, fordi jeg ikke skal bruge svaret
+        //    return Created($"/api/borger/{opretBorger.ID}", opret);
+
+        //}
         /// <summary>
         /// ////BORGER REGISTRERINGER///
         /// </summary>
         /// <param borgerID></param>
         /// <returns></returns>
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [HttpGet("{borgerID}/BorgerRegistreringer")]
-        public ActionResult<IEnumerable<BorgerRegistrering>> GetAll(int borgerID)
-        {
-            IEnumerable<BorgerRegistrering> result = _managerBorger.GetAllRegi(borgerID);
-            if (result.Count() == 0)
-            {
-                //listen er tom
-                return NoContent();
-            }
-            //ellers returner listen med borger registreringer
-            return Ok(result);
-        }
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [HttpPost("{borgerID}/BorgerRegistreringer")]
-        public ActionResult<BorgerRegistrering> Post([FromBody] BorgerRegistrering opretBorgerRegi, int borgerID)
-        {
-            //_managerBorger.GetByIDBorger(borgerID);
-            BorgerRegistrering opret = _managerBorger.OpretRegi(opretBorgerRegi, borgerID);
-            if (opret == null)
-            {
-                return BadRequest("OpretRegi er null!");
-            }
-            //location header bliver udfyldt, fordi jeg ikke skal bruge svaret
-            return NoContent();
-        }
+        //[ProducesResponseType(StatusCodes.Status200OK)]
+        //[ProducesResponseType(StatusCodes.Status204NoContent)]
+        //[HttpGet("{borgerID}/BorgerRegistreringer")]
+        //public ActionResult<IEnumerable<BorgerRegistrering>> GetAll(int borgerID)
+        //{
+        //    IEnumerable<BorgerRegistrering> result = _managerBorger.GetAllRegi(borgerID);
+        //    if (result.Count() == 0)
+        //    {
+        //        //listen er tom
+        //        return NoContent();
+        //    }
+        //    //ellers returner listen med borger registreringer
+        //    return Ok(result);
+        //}
+        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
+        //[HttpPost("{borgerID}/BorgerRegistreringer")]
+        //public ActionResult<BorgerRegistrering> Post([FromBody] BorgerRegistrering opretBorgerRegi, int borgerID)
+        //{
+        //    //_managerBorger.GetByIDBorger(borgerID);
+        //    BorgerRegistrering opret = _managerBorger.OpretRegi(opretBorgerRegi, borgerID);
+        //    if (opret == null)
+        //    {
+        //        return BadRequest("OpretRegi er null!");
+        //    }
+        //    //location header bliver udfyldt, fordi jeg ikke skal bruge svaret
+        //    return NoContent();
+        //}
 
         /// <summary>
         /////BORGER PAUSER///
         /// </summary>
         /// <returns></returns>
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [HttpGet("{borgerID}/BorgerPauser")]
-        public ActionResult<IEnumerable<BorgerPause>> GetAllP(int borgerID)
-        {
-            IEnumerable<BorgerPause> result = _managerBorger.GetAllPauser(borgerID);
-            if (result.Count() == 0)
-            {
-                //listen er tom
-                return NoContent();
-            }
-            //ellers returner listen med borger pauser
-            return Ok(result);
-        }
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [HttpPost("{borgerID}/BorgerPauser")]
-        public ActionResult<BorgerPause> Post([FromBody] BorgerPause borgerPause, int borgerID)
-        {
-            BorgerPause opretPause = _managerBorger.OpretPause(borgerPause, borgerID);
-            if (opretPause == null)
-            {
-                return BadRequest("OpretPause er null!");
-            }
-            //location header bliver udfyldt, fordi jeg ikke skal bruge svaret
-            return NoContent();
-        }
-  
+        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
+        //[HttpGet("{borgerID}/BorgerPauser")]
+        //public ActionResult<IEnumerable<BorgerPause>> GetAllP(int borgerID)
+        //{
+        //    IEnumerable<BorgerPause> result = _managerBorger.GetAllPauser(borgerID);
+        //    if (result.Count() == 0)
+        //    {
+        //        //listen er tom
+        //        return NoContent();
+        //    }
+        //    //ellers returner listen med borger pauser
+        //    return Ok(result);
+        //}
+        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
+        //[HttpPost("{borgerID}/BorgerPauser")]
+        //public ActionResult<BorgerPause> Post([FromBody] BorgerPause borgerPause, int borgerID)
+        //{
+        //    BorgerPause opretPause = _managerBorger.OpretPause(borgerPause, borgerID);
+        //    if (opretPause == null)
+        //    {
+        //        return BadRequest("OpretPause er null!");
+        //    }
+        //    //location header bliver udfyldt, fordi jeg ikke skal bruge svaret
+        //    return NoContent();
+        //}
+
         /// <summary>
         ////BORGER NOTER///
         /// </summary>
@@ -125,12 +155,12 @@ namespace RestApiRoskilde.Controllers
         // GET: api/<AdminController>
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [HttpGet("{borgerID}/BorgerNoter")]
-        public ActionResult<IEnumerable<BorgerNote>> GetAllNoter(int borgerID)
+        [HttpGet("{BorgerID}/BorgerNoter")]
+        public ActionResult<IEnumerable<BorgerNote>> GetAllNoter(int BorgerID)
         {
             //Borger borger = _managerBorger.GetByIDBorger(borgerID);
             //på borgerne nu, er der noter
-            IEnumerable<BorgerNote> result = _managerNoteBorger.GetAllNoter(borgerID);
+            IEnumerable<BorgerNote> result = _borgerDB.GetAllNoterByIDDB(BorgerID);
             if (result.Count() == 0)
             {
                 //listen er tom
@@ -139,76 +169,90 @@ namespace RestApiRoskilde.Controllers
             //ellers returner listen med borger noter
             return Ok(result);
         }
-        //Note om borger der postes på den samme side
-        // POST api/<AdminController>
-        [HttpPost("{borgerID}/BorgerNoter")]
-        public ActionResult<BorgerNote> Post([FromBody] BorgerNote borgerNote, int borgerID)
-        {
-            //finde borgeren - hver gang, med som parameter i hver metode
-            //nu vil jeg have fat i borgerens borgernotemanager, og opretnoten -
-            //på borgeren med det NoteID som jeg indtaster, der er derfor et lag mere
-            BorgerNote opretNote = _managerNoteBorger.OpretNote(borgerNote, borgerID);
-            if (opretNote == null)
-            {
-                return BadRequest();
-            }
-            //location header bliver udfyldt, fordi jeg ikke skal bruge svaret
-            return NoContent();
-            //return Created($"/api/borger/{opretNote.NoteID = borger.NoteID}", opretNote);
-        }
+        [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [HttpDelete("{borgerID}/BorgerNoter")]
-        public ActionResult<BorgerNote> Delete([FromQuery] int noteID, int borgerID)
+        [HttpGet("{BorgerID}/BorgerOpgaver")]
+        public ActionResult<IEnumerable<BorgerOpgave>> GetAllArbejdsOpgaver(int BorgerID)
         {
-            BorgerNote sletNote = _managerNoteBorger.SletNote(noteID, borgerID);
-            if (sletNote == null)
-            { 
-                return NotFound(); 
+            IEnumerable<BorgerOpgave> result = _borgerDB.GetAllOpgaverByIDDB(BorgerID);
+            if (result.Count() == 0)
+            {
+                //listen er tom
+                return NoContent();
             }
-            return Ok(sletNote);
+            //ellers returner listen med borger noter
+            return Ok(result);
         }
+        ////Note om borger der postes på den samme side
+        //// POST api/<AdminController>
+        //[HttpPost("{borgerID}/BorgerNoter")]
+        //public ActionResult<BorgerNote> Post([FromBody] BorgerNote borgerNote, int borgerID)
+        //{
+        //    //finde borgeren - hver gang, med som parameter i hver metode
+        //    //nu vil jeg have fat i borgerens borgernotemanager, og opretnoten -
+        //    //på borgeren med det NoteID som jeg indtaster, der er derfor et lag mere
+        //    BorgerNote opretNote = _managerNoteBorger.OpretNote(borgerNote, borgerID);
+        //    if (opretNote == null)
+        //    {
+        //        return BadRequest();
+        //    }
+        //    //location header bliver udfyldt, fordi jeg ikke skal bruge svaret
+        //    return NoContent();
+        //    //return Created($"/api/borger/{opretNote.NoteID = borger.NoteID}", opretNote);
+        //}
+        //[ProducesResponseType(StatusCodes.Status404NotFound)]
+        //[HttpDelete("{borgerID}/BorgerNoter")]
+        //public ActionResult<BorgerNote> Delete([FromQuery] int noteID, int borgerID)
+        //{
+        //    BorgerNote sletNote = _managerNoteBorger.SletNote(noteID, borgerID);
+        //    if (sletNote == null)
+        //    { 
+        //        return NotFound(); 
+        //    }
+        //    return Ok(sletNote);
+        //}
         /// <summary>
         //// BY TLF (istedet for getbyid) ////
         /// </summary>
         /// <param name="tlf"></param>
         /// <returns></returns>
-        [HttpGet("{borgerByTlf}/BorgerTlf")]
-        public ActionResult<Borger> Get(string tlf)
-        {
-            return _managerBorger.GetBorgerByTlf(tlf);
-        }
+        //[HttpGet("{borgerByTlf}/BorgerTlf")]
+        //public ActionResult<Borger> Get(string tlf)
+        //{
+        //    return _managerBorger.GetBorgerByTlf(tlf);
+        //}
 
-        //"LOGIN" api/<AdminController>/5
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [HttpPost("{tlf}/BorgerTlf")]
-        public ActionResult<Borger> Post(string tlf)
-        {
-            // Call the CheckIfBorgerExists method to check or create Borger
-            Borger? opretNyBorgerMedTlf = _managerBorger.CheckIfBorgerExists(tlf);
-            if (opretNyBorgerMedTlf == null)
-            {
-                return BadRequest("Opret Tlf er null!");
+        ////"LOGIN" api/<AdminController>/5
+        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
+        //[ProducesResponseType(StatusCodes.Status200OK)]
+        //[HttpPost("{tlf}/BorgerTlf")]
+        //public ActionResult<Borger> Post(string tlf)
+        //{
+        //    // Call the CheckIfBorgerExists method to check or create Borger
+        //    Borger? opretNyBorgerMedTlf = _managerBorger.CheckIfBorgerExists(tlf);
+        //    if (opretNyBorgerMedTlf == null)
+        //    {
+        //        return BadRequest("Opret Tlf er null!");
 
-            }
-            return Ok(opretNyBorgerMedTlf);
+        //    }
+        //    return Ok(opretNyBorgerMedTlf);
 
-        }
-        //fra query
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [HttpPut("{borgerID}")]
-        public ActionResult<Borger> Put(int borgerID, [FromQuery] string navn)
-        {
-            // Call the CheckIfBorgerExists method to check or create Borger
-            Borger? opretBorgerMedNavn = _managerBorger.OpdaterBorgerNavn(navn, borgerID);
-            if (opretBorgerMedNavn == null)
-            {
-                return NotFound("Borger findes ikke!");
+        //}
+        ////fra query
+        //[ProducesResponseType(StatusCodes.Status404NotFound)]
+        //[ProducesResponseType(StatusCodes.Status200OK)]
+        //[HttpPut("{borgerID}")]
+        //public ActionResult<Borger> Put(int borgerID, [FromQuery] string navn)
+        //{
+        //    // Call the CheckIfBorgerExists method to check or create Borger
+        //    Borger? opretBorgerMedNavn = _managerBorger.OpdaterBorgerNavn(navn, borgerID);
+        //    if (opretBorgerMedNavn == null)
+        //    {
+        //        return NotFound("Borger findes ikke!");
 
-            }
-            return Ok(opretBorgerMedNavn);
+        //    }
+        //    return Ok(opretBorgerMedNavn);
 
-        }
+        //}
     }
 }
