@@ -183,6 +183,20 @@ namespace RestApiRoskilde.Controllers
             //ellers returner listen med borger noter
             return Ok(result);
         }
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [HttpGet("{BorgerID}/BorgerPauser")]
+        public ActionResult<IEnumerable<BorgerOpgave>> GetAllPauser(int BorgerID)
+        {
+            IEnumerable<BorgerPause> result = _borgerDB.GetAllPauseByIDDB(BorgerID);
+            if (result.Count() == 0)
+            {
+                //listen er tom
+                return NoContent();
+            }
+            //ellers returner listen med borger pauser
+            return Ok(result);
+        }
         ////Note om borger der postes på den samme side
         //// POST api/<AdminController>
         //[HttpPost("{borgerID}/BorgerNoter")]

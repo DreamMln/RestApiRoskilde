@@ -6,8 +6,10 @@ namespace RestApiRoskilde.Models
     {
         [Key]
         public int PauseID { get; set; }
-        public string? PauseStart { get; set; }
-        public string? PauseSlut { get; set; }
+        public DateTime? PauseStart { get; set; }
+        public DateTime? PauseSlut { get; set; }
+        public int ID { get; internal set; }
+
 
     }
 }

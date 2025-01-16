@@ -31,8 +31,8 @@ namespace RestApiRoskilde.Managers
                     {
                             new BorgerPause() {
 
-                                PauseStart = DateTime.Now.AddMinutes(-31).ToString("dddd, dd MMMM yyyy HH:mm:ss"),
-                                PauseSlut = DateTime.Now.ToString("dddd, dd MMMM yyyy HH:mm:ss")
+                               // PauseStart = DateTime.Now.AddMinutes(-31).ToString("dddd, dd MMMM yyyy HH:mm:ss"),
+                               // PauseSlut = DateTime.Now.ToString("dddd, dd MMMM yyyy HH:mm:ss")
                             }
                      },
                 borgerNoter = new List<BorgerNote>
@@ -59,8 +59,8 @@ namespace RestApiRoskilde.Managers
                 },
                 BorgerPauser = new List<BorgerPause>()
                         { new BorgerPause() {
-                                PauseStart = DateTime.Now.AddMinutes(-15).ToString("dddd, dd MMMM yyyy HH:mm:ss"),
-                                PauseSlut = DateTime.Now.ToString("dddd, dd MMMM yyyy HH:mm:ss")
+                            //    PauseStart = DateTime.Now.AddMinutes(-15).ToString("dddd, dd MMMM yyyy HH:mm:ss"),
+                             //   PauseSlut = DateTime.Now.ToString("dddd, dd MMMM yyyy HH:mm:ss")
                         }
                 },
                 borgerNoter = new List<BorgerNote>
@@ -89,8 +89,8 @@ namespace RestApiRoskilde.Managers
                         {
                             new BorgerPause()
                             {
-                                PauseStart = DateTime.Now.AddMinutes(-12).ToString("dddd, dd MMMM yyyy HH:mm:ss"),
-                                PauseSlut = DateTime.Now.ToString("dddd, dd MMMM yyyy HH:mm:ss")
+                              //  PauseStart = DateTime.Now.AddMinutes(-12).ToString("dddd, dd MMMM yyyy HH:mm:ss"),
+                              //  PauseSlut = DateTime.Now.ToString("dddd, dd MMMM yyyy HH:mm:ss")
     }
                         },
                 borgerNoter = new List<BorgerNote>  

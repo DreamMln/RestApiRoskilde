@@ -13,5 +13,6 @@ namespace RestApiRoskilde.Managers
         public DbSet<BorgerOplysninger> Borgere { get; set; }
         public DbSet<BorgerNote> Noter { get; set; }
         public DbSet<BorgerOpgave> Opgaver { get; set; }
+        public DbSet<BorgerPause> Pauser { get; set; }
     }
 }
