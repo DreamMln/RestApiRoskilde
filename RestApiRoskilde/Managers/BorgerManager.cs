@@ -15,9 +15,9 @@ namespace RestApiRoskilde.Managers
         private static List<Borger> _borgerListe = new List<Borger>()
         {
             new Borger {
-                ID = _nextId++,
-                Navn= "Klaus Jensen",
-                Tlf = "33225511",
+                //ID = _nextId++,
+               // Navn= "Klaus Jensen",
+               // Tlf = "33225511",
                 BorgerRegistreringer = new List<BorgerRegistrering>()
                 {
                     new BorgerRegistrering() 
@@ -40,14 +40,14 @@ namespace RestApiRoskilde.Managers
                     new BorgerNote
                     {
                         NoteOmBorger = "Her er der en note om klaus",
-                        DatoTid = DateTime.Now.ToString("dddd, dd MMMM yyyy HH:mm:ss")
+                        //DatoTid = DateTime.Now.ToString("dddd, dd MMMM yyyy HH:mm:ss")
                     }
                 }
             },
              new Borger {
-                ID = _nextId++,
-                Navn= "Viola Nielsen",
-                Tlf = "45731524",
+               // ID = _nextId++,
+               // Navn= "Viola Nielsen",
+               // Tlf = "45731524",
                 BorgerRegistreringer = new List<BorgerRegistrering>()
                 {
                     new BorgerRegistrering()
@@ -68,14 +68,14 @@ namespace RestApiRoskilde.Managers
                     new BorgerNote
                     {
                         NoteOmBorger = "Her er der en note om viola",
-                        DatoTid = DateTime.Now.ToString("dddd, dd MMMM yyyy HH:mm:ss")
+                       // DatoTid = DateTime.Now.ToString("dddd, dd MMMM yyyy HH:mm:ss")
                     }
                 }
             },
             new Borger {
-                ID = _nextId++,
-                Navn= "Laura Hansen",
-                Tlf = "54847548",
+               // ID = _nextId++,
+               // Navn= "Laura Hansen",
+               // Tlf = "54847548",
                 BorgerRegistreringer = new List<BorgerRegistrering>() 
                 { 
                     new BorgerRegistrering() 
@@ -98,7 +98,7 @@ namespace RestApiRoskilde.Managers
                     new BorgerNote
                     { 
                         NoteOmBorger = "Her er der endnu en note om laura",
-                        DatoTid = DateTime.Now.ToString("dddd, dd MMMM yyyy HH:mm:ss")
+                       // DatoTid = DateTime.Now.ToString("dddd, dd MMMM yyyy HH:mm:ss")
                     }
                 },
             }
@@ -113,16 +113,18 @@ namespace RestApiRoskilde.Managers
         //get borger på deres NoteID
         public Borger GetByIDBorger(int id)
         {
-            Borger borger = _borgerListe.Find(b => b.ID == id);
-            return borger;
+            //Borger borger = _borgerListe.Find(b => b.ID == id);
+            //return borger;
+            return null;
         }
 
         //Opret en ny borger
         public Borger OpretBorger(Borger borger)
         {
-            borger.ID = _nextId++;
-            _borgerListe.Add(borger);
-            return borger;
+            //borger.ID = _nextId++;
+            //_borgerListe.Add(borger);
+            //return borger;
+            return null;
         }
 
         //Opret et navn på borger - det er en update
@@ -134,7 +136,7 @@ namespace RestApiRoskilde.Managers
                 return null;
             }
             //opdater borgerens navn
-            borger.Navn = navn;
+            //borger.Navn = navn;
             return borger;
         }
         //////////////////BORGER REGISTRERINGER///////////
@@ -218,7 +220,8 @@ namespace RestApiRoskilde.Managers
         public Borger? GetBorgerByTlf(string tlf)
         {
             // Find the Borger object in the list based on the telephone number
-            return _borgerListe.Find(b => b.Tlf == tlf);
+            //return _borgerListe.Find(b => b.Tlf == tlf);
+            return null;
         }
         //kan ikke være null
         public Borger CheckIfBorgerExists(string tlf)
@@ -228,7 +231,7 @@ namespace RestApiRoskilde.Managers
             // If Borger does not exist, create a new one with the provided telephone number
             if (borger == null)
             {
-               borger = OpretBorger(new Borger { Tlf = tlf });
+               //borger = OpretBorger(new Borger { Tlf = tlf });
             }
             return borger;
         }

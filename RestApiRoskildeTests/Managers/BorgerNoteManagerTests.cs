@@ -28,8 +28,8 @@ namespace RestApiRoskilde.Managers.Tests
             _borgerNoteManager = new BorgerNoteManager();
 
             // tilføj et eksempel af borger til BorgerManager
-            var borger = new Borger { ID = 1 };
-            _borgerManager.OpretBorger(borger);
+            //var borger = new Borger { ID = 1 };
+           // _borgerManager.OpretBorger(borger);
         }
         [TestMethod()]
         public void GetAllNoterTest()
