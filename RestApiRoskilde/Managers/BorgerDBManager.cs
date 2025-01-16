@@ -76,6 +76,12 @@ namespace RestApiRoskilde.Managers
                 _DBConnectionFile.Pauser.Where(b => b.ID == borgerID).ToList();
             return borgerPauseListe;
         }
+        public IEnumerable<BorgerRegistrering> GetAllRegiByIDDB(int borgerID)
+        {
+            IEnumerable<BorgerRegistrering> borgerRegiListe =
+                _DBConnectionFile.Registreringer.Where(b => b.ID == borgerID).ToList();
+            return borgerRegiListe;
+        }
 
     }
 }

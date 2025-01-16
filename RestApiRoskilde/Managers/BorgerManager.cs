@@ -22,8 +22,8 @@ namespace RestApiRoskilde.Managers
                 {
                     new BorgerRegistrering() 
                     { 
-                        Ind = DateTime.Now.AddHours(-4).ToString("dddd, dd MMMM yyyy HH:mm:ss"),
-                        Ud = DateTime.Now.ToString("dddd, dd MMMM yyyy HH:mm:ss"),
+                       // Ind = DateTime.Now.AddHours(-4).ToString("dddd, dd MMMM yyyy HH:mm:ss"),
+                      //  Ud = DateTime.Now.ToString("dddd, dd MMMM yyyy HH:mm:ss"),
                         
                     }
                 },
@@ -52,8 +52,8 @@ namespace RestApiRoskilde.Managers
                 {
                     new BorgerRegistrering()
                     {
-                        Ind = DateTime.Now.AddHours(-5).ToString("dddd, dd MMMM yyyy HH:mm:ss"),
-                        Ud = DateTime.Now.ToString("dddd, dd MMMM yyyy HH:mm:ss"),
+                      //  Ind = DateTime.Now.AddHours(-5).ToString("dddd, dd MMMM yyyy HH:mm:ss"),
+                      //  Ud = DateTime.Now.ToString("dddd, dd MMMM yyyy HH:mm:ss"),
                         
                     }
                 },
@@ -80,8 +80,8 @@ namespace RestApiRoskilde.Managers
                 { 
                     new BorgerRegistrering() 
                     { 
-                        Ind = DateTime.Now.AddHours(-3.05).ToString("dddd, dd MMMM yyyy HH:mm:ss"), 
-                        Ud = DateTime.Now.ToString("dddd, dd MMMM yyyy HH:mm:ss"),
+                      //  Ind = DateTime.Now.AddHours(-3.05).ToString("dddd, dd MMMM yyyy HH:mm:ss"), 
+                      //  Ud = DateTime.Now.ToString("dddd, dd MMMM yyyy HH:mm:ss"),
                         
                     }
                 },

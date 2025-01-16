@@ -7,7 +7,9 @@ namespace RestApiRoskilde.Models
         [Key]
 
         public int RegiID { get; set; }
-        public string? Ind { get; set; }
-        public string? Ud { get; set; }
+        public DateTime? Ind { get; set; }
+        public DateTime? Ud { get; set; }
+        public int ID { get; internal set; }
+
     }
 }
