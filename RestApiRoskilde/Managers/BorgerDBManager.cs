@@ -82,6 +82,41 @@ namespace RestApiRoskilde.Managers
                 _DBConnectionFile.Registreringer.Where(b => b.ID == borgerID).ToList();
             return borgerRegiListe;
         }
+        //Opret et navn på borger - det er en update
+        public BorgerOplysninger OpdaterBorgerNavn(string navn, int borgerID)
+        {
+            BorgerOplysninger borger = GetByIDBorger(borgerID);
+            if (borger == null)
+            {
+                return null;
+            }
+            //opdater borgerens navn
+            borger.Navn = navn;
+            _DBConnectionFile.SaveChanges();
+            return borger;
+        }
+        // Find the Borger object in the list based on the telephone number
 
+        public BorgerOplysninger? GetBorgerByTlf(string tlf)
+        {
+            return _DBConnectionFile.Borgere.FirstOrDefault(b => b.Tlf == tlf);
+        }
+        
+        //chechke om borgeren eksistere på tlf nummer, ellers opret en ny borger med det tlf der indtastes
+        //kan ikke være null
+        public BorgerOplysninger CheckIfBorgerExists(string tlf)
+        {
+            // Check if a BorgerOplysninger eksistere for det givne tlf nr
+            BorgerOplysninger? borger = GetBorgerByTlf(tlf);
+            // Hvis Borger ikke eksistere, opret da en ny med det indtastede tlf nr
+            if (borger == null)
+            {
+                borger = OpretBorgerDB(new BorgerOplysninger { Tlf = tlf });
+            }
+            return borger;
+        }
+
+
+        
     }
 }

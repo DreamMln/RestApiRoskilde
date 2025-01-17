@@ -244,43 +244,43 @@ namespace RestApiRoskilde.Controllers
         /// </summary>
         /// <param name="tlf"></param>
         /// <returns></returns>
-        //[HttpGet("{borgerByTlf}/BorgerTlf")]
-        //public ActionResult<Borger> Get(string tlf)
-        //{
-        //    return _managerBorger.GetBorgerByTlf(tlf);
-        //}
+        [HttpGet("{borgerByTlf}/BorgerTlf")]
+        public ActionResult<BorgerOplysninger> Get(string tlf)
+        {
+            return _borgerDB.GetBorgerByTlf(tlf);
+        }
 
-        ////"LOGIN" api/<AdminController>/5
-        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
-        //[ProducesResponseType(StatusCodes.Status200OK)]
-        //[HttpPost("{tlf}/BorgerTlf")]
-        //public ActionResult<Borger> Post(string tlf)
-        //{
-        //    // Call the CheckIfBorgerExists method to check or create Borger
-        //    Borger? opretNyBorgerMedTlf = _managerBorger.CheckIfBorgerExists(tlf);
-        //    if (opretNyBorgerMedTlf == null)
-        //    {
-        //        return BadRequest("Opret Tlf er null!");
+        ////"Check om borgeren eksistere" api/<AdminController>/5
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [HttpPost("{tlf}/BorgerTlf")]
+        public ActionResult<BorgerOplysninger> Post(string tlf)
+        {
+            // kald CheckIfBorgerExists medtoden for at checke eller få oprettet en Borger med tlf
+            BorgerOplysninger? opretNyBorgerMedTlf = _borgerDB.CheckIfBorgerExists(tlf);
+            if (opretNyBorgerMedTlf == null)
+            {
+                return BadRequest("Opret Tlf er null - ingenting!");
 
-        //    }
-        //    return Ok(opretNyBorgerMedTlf);
+            }
+            return Ok(opretNyBorgerMedTlf);
 
-        //}
+        }
         ////fra query
-        //[ProducesResponseType(StatusCodes.Status404NotFound)]
-        //[ProducesResponseType(StatusCodes.Status200OK)]
-        //[HttpPut("{borgerID}")]
-        //public ActionResult<Borger> Put(int borgerID, [FromQuery] string navn)
-        //{
-        //    // Call the CheckIfBorgerExists method to check or create Borger
-        //    Borger? opretBorgerMedNavn = _managerBorger.OpdaterBorgerNavn(navn, borgerID);
-        //    if (opretBorgerMedNavn == null)
-        //    {
-        //        return NotFound("Borger findes ikke!");
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [HttpPut("{borgerID}")]
+        public ActionResult<BorgerOplysninger> Put(int borgerID, [FromQuery] string navn)
+        {
+            // Call the CheckIfBorgerExists method to check or create Borger
+            BorgerOplysninger? opretBorgerMedNavn = _borgerDB.OpdaterBorgerNavn(navn, borgerID);
+            if (opretBorgerMedNavn == null)
+            {
+                return NotFound("Borger findes ikke!");
 
-        //    }
-        //    return Ok(opretBorgerMedNavn);
+            }
+            return Ok(opretBorgerMedNavn);
 
-        //}
+        }
     }
 }
