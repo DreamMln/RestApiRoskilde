@@ -102,19 +102,7 @@ namespace RestApiRoskilde.Controllers
         //    //ellers returner listen med borger registreringer
         //    return Ok(result);
         //}
-        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
-        //[HttpPost("{borgerID}/BorgerRegistreringer")]
-        //public ActionResult<BorgerRegistrering> Post([FromBody] BorgerRegistrering opretBorgerRegi, int borgerID)
-        //{
-        //    //_managerBorger.GetByIDBorger(borgerID);
-        //    BorgerRegistrering opret = _managerBorger.OpretRegi(opretBorgerRegi, borgerID);
-        //    if (opret == null)
-        //    {
-        //        return BadRequest("OpretRegi er null!");
-        //    }
-        //    //location header bliver udfyldt, fordi jeg ikke skal bruge svaret
-        //    return NoContent();
-        //}
+        
 
         /// <summary>
         /////BORGER PAUSER///
@@ -133,18 +121,7 @@ namespace RestApiRoskilde.Controllers
         //    //ellers returner listen med borger pauser
         //    return Ok(result);
         //}
-        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
-        //[HttpPost("{borgerID}/BorgerPauser")]
-        //public ActionResult<BorgerPause> Post([FromBody] BorgerPause borgerPause, int borgerID)
-        //{
-        //    BorgerPause opretPause = _managerBorger.OpretPause(borgerPause, borgerID);
-        //    if (opretPause == null)
-        //    {
-        //        return BadRequest("OpretPause er null!");
-        //    }
-        //    //location header bliver udfyldt, fordi jeg ikke skal bruge svaret
-        //    return NoContent();
-        //}
+       
 
         /// <summary>
         ////BORGER NOTER///
@@ -197,6 +174,18 @@ namespace RestApiRoskilde.Controllers
             //ellers returner listen med borger pauser
             return Ok(result);
         }
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [HttpPost("{borgerID}/BorgerPauser")]
+        public ActionResult<BorgerPause> Post([FromBody] BorgerPause borgerPause, int borgerID)
+        {
+            BorgerPause opretPause = _borgerDB.OpretPauseDB(borgerPause, borgerID);
+            if (opretPause == null)
+            {
+                return BadRequest("OpretPause er null!");
+            }
+            //location header bliver udfyldt, fordi jeg ikke skal bruge svaret
+            return NoContent();
+        }
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpGet("{BorgerID}/BorgerRegistreringer")]
@@ -210,6 +199,19 @@ namespace RestApiRoskilde.Controllers
             }
             //ellers returner listen med borger pauser
             return Ok(result);
+        }
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [HttpPost("{borgerID}/BorgerRegistreringer")]
+        public ActionResult<BorgerRegistrering> Post([FromBody] BorgerRegistrering opretBorgerRegi, int borgerID)
+        {
+            //_managerBorger.GetByIDBorger(borgerID);
+            BorgerRegistrering opret = _borgerDB.OpretRegiDB(opretBorgerRegi, borgerID);
+            if (opret == null)
+            {
+                return BadRequest("OpretRegi er null!");
+            }
+            //location header bliver udfyldt, fordi jeg ikke skal bruge svaret
+            return NoContent();
         }
         ////Note om borger der postes på den samme side
         //// POST api/<AdminController>
